@@ -113,7 +113,7 @@ resource "aws_codebuild_project" "terraform_apply" {
 }
 
 resource "aws_security_group" "builder" {
-  name        = "${var.application_name}-CodeBuild"
+  name        = "${var.labels.tags.Environment}-${var.labels.tags.Service}-CodeBuild"
   description = "test"
   vpc_id      = var.vpc_id
   egress = [
@@ -136,7 +136,7 @@ resource "aws_security_group" "builder" {
 }
 
 resource "aws_cloudwatch_log_group" "account_provisioning_customizations" {
-  name              = "/aws/codebuild/ct-aft-account-provisioning-customizations"
+  name              = "/aws/codebuild/${var.labels.tags.Environment}/${var.labels.tags.Service}/build-logs"
   retention_in_days = var.log_group_retention
 }
 
