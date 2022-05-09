@@ -113,7 +113,7 @@ resource "aws_iam_role_policy" "codebuild_role" {
     "Statement" : [
       {
         "Effect" : "Allow",
-        "Resource" : "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/ct-aft*",
+        "Resource" : "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*",
         "Action" : [
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -172,7 +172,7 @@ resource "aws_iam_role_policy" "codebuild_role" {
           "ssm:GetParameter"
         ],
         "Resource" : [
-          "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/aft/*"
+          "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/*"
         ]
       },
       {
