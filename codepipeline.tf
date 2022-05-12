@@ -3,12 +3,13 @@
 # CodeStar - account-provisioning-customizations
 ##############################################################
 
+
 resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
   name     = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-Build-and-deploy")
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
-    location = aws_s3_bucket.store.bucket
+    location = var.s3_artifact_store
     type     = "S3"
   }
 

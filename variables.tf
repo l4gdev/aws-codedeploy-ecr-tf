@@ -56,3 +56,7 @@ variable "build_envs" {
   type        = any
   description = "key -> value definition for example {REGION: \"eu-west-1\"}"
 }
+
+variable "s3_artifact_store" {
+  type = string
+}
