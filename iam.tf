@@ -1,3 +1,7 @@
+data "aws_s3_bucket" "bucket_name" {
+  bucket = var.s3_artifact_store
+}
+
 resource "aws_iam_role" "codepipeline_role" {
   name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codepipeline-role")
   assume_role_policy = jsonencode({
@@ -11,7 +15,7 @@ resource "aws_iam_role" "codepipeline_role" {
         "Action" : "sts:AssumeRole"
       }
     ]
-    }
+  }
   )
 }
 
@@ -33,8 +37,8 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
             "s3:PutObject"
           ],
           "Resource" : [
-            aws_s3_bucket.store.arn,
-            "${aws_s3_bucket.store.arn}/*"
+            data.aws_s3_bucket.bucket_name.arn,
+            "${data.aws_s3_bucket.bucket_name.arn}/*"
           ]
         },
         {
@@ -71,7 +75,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "Effect" : "Allow",
           "Action" : "codestar-connections:UseConnection",
           "Resource" : "*"
-          }, {
+        }, {
           "Effect" : "Allow",
           "Action" : [
             "codebuild:StartBuild"
@@ -100,7 +104,7 @@ resource "aws_iam_role" "build" {
         "Action" : "sts:AssumeRole"
       }
     ]
-    }
+  }
   )
 }
 
@@ -152,8 +156,8 @@ resource "aws_iam_role_policy" "codebuild_role" {
           "s3:PutObject"
         ],
         "Resource" : [
-          aws_s3_bucket.store.arn,
-          "${aws_s3_bucket.store.arn}/*"
+          data.aws_s3_bucket.bucket_name.arn,
+          "${data.aws_s3_bucket.bucket_name.arn}/*"
         ]
       },
       #      {
@@ -208,7 +212,7 @@ resource "aws_iam_role_policy" "codebuild_role" {
         ]
       }
     ]
-    }
+  }
   )
 }
 
