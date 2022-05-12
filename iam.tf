@@ -152,8 +152,8 @@ resource "aws_iam_role_policy" "codebuild_role" {
           "s3:PutObject"
         ],
         "Resource" : [
-          aws_s3_bucket.store.arn,
-          "${aws_s3_bucket.store.arn}/*"
+          var.s3_artifact_store,
+          "${var.s3_artifact_store}/*"
         ]
       },
       #      {
