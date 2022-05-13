@@ -98,7 +98,7 @@ resource "aws_codebuild_project" "terraform_apply" {
       TF_VERSION        = "1.1.7"
       TF_BACKEND_REGION = "eu-west-1"
       REGION            = "eu-west-1"
-      TF_S3_BUCKET      = "codebuild-artifacts-${data.aws_caller_identity.current.account_id}"
+      TF_S3_BUCKET      = "terraform-state-${data.aws_caller_identity.current.account_id}"
       TF_S3_KEY         = "${var.labels.tags.Environment}/${var.labels.tags.Service}.tfstate"
       SERVICE           = var.labels.tags.Service
     })
