@@ -6,15 +6,15 @@ phases:
       - DEFAULT_PATH=$(pwd)
       - cd /tmp
       - echo "Installing Terraform"
-      - curl -o terraform_1.1.7_linux_amd64.zip https://releases.hashicorp.com/terraform/1.1.7/terraform_1.1.7_linux_amd64.zip
-      - unzip -o terraform_1.1.7_linux_amd64.zip && mv terraform /usr/bin
+      - curl -o terraform_${TF_VERSION}_linux_amd64.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+      - unzip -o terraform_${TF_VERSION}_linux_amd64.zip && mv terraform /usr/bin
       - terraform --version
       - python3 -m venv ./venv
       - source ./venv/bin/activate
       - pip install jinja2-cli==0.7.0 Jinja2==3.0.1 MarkupSafe==2.0.1 boto3==1.18.56 requests==2.26.0
       - cd $DEFAULT_PATH/.infrastructure/
       - |
-        for f in *.jinja; do jinja2 $f -D region=eu-west-1 -D provider_region=eu-west-1 -D bucket=terraform-state-219903820215 -D key=testing/test-deploy.tfstate -D service=test-deploy -D tf_version=1.1.7    >> ./$(basename $f .jinja).tf; done
+        for f in *.jinja; do jinja2 $f -D region=${TF_BACKEND_REGION} -D provider_region=${REGION} -D bucket=${TF_S3_BUCKET} -D key=${TF_S3_KEY} -D service=${SERVICE} -D tf_version=${TF_VERSION}    >> ./$(basename $f .jinja).tf; done
         for f in *.tf; do echo "\n \n"; echo $f; cat $f; done       
       - ls -ali
       - terraform init -upgrade
