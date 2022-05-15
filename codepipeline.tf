@@ -7,6 +7,7 @@
 resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
   name     = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-Build-and-deploy")
   role_arn = aws_iam_role.codepipeline_role.arn
+  tags     = var.tags
 
   artifact_store {
     location = var.s3_artifact_store
@@ -28,7 +29,7 @@ resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
       output_artifacts = ["repo"]
 
       configuration = {
-        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        ConnectionArn        = var.codestar_connection_arn
         FullRepositoryId     = var.repository.name
         BranchName           = var.repository.branch
         DetectChanges        = true

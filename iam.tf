@@ -17,6 +17,7 @@ resource "aws_iam_role" "codepipeline_role" {
     ]
   }
   )
+  tags = var.tags
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
@@ -93,6 +94,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 
 resource "aws_iam_role" "build" {
   name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codebuild-role")
+  tags = var.tags
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
