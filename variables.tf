@@ -67,7 +67,7 @@ variable "codestar_connection_arn" {
   type        = string
   description = "An ARN for AWS codestar connection (eg for github)"
   validation {
-      condition     = can(regex("^arn:aws:codestar-connection:w+(?:-\\w+)+:[[:digit:]]{12}:connection/.+", var.codestar_connection_arn))
+      condition     = can(regex("^arn:aws:codestar-connections:[^:\n]*:[[:digit:]]{12}:connection/.+", var.codestar_connection_arn))
       error_message = "Codestar connection must start with letter, only contain letters, numbers, dashes, or underscores and must be between 1 and 64 characters."
     }
 }
