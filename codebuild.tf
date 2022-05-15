@@ -102,6 +102,8 @@ resource "aws_codebuild_project" "terraform_apply" {
       TF_S3_BUCKET      = "terraform-state-${data.aws_caller_identity.current.account_id}"
       TF_S3_KEY         = "${var.labels.tags.Environment}/${var.labels.tags.Service}.tfstate"
       SERVICE           = var.labels.tags.Service
+      ENVIRONMENT       = var.labels.tags.Environment
+      TAGS              = jsonencode(var.tags)
     })
   }
 
