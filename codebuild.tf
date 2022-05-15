@@ -9,8 +9,6 @@ locals {
   }
   build_envs = merge(merge(local.default_build_envs, var.build_envs), var.labels.tags)
   build_spec = var.custom_build_spec == "" ? data.local_file.docker_build_buildspec.content : var.custom_build_spec
-
-
 }
 
 
@@ -20,9 +18,11 @@ resource "aws_codebuild_project" "build" {
   description   = "Build docker for ${var.labels.tags.Service}"
   build_timeout = var.build_configuration.build_timeout
   service_role  = aws_iam_role.build.arn
+  tags          = var.tags
 
   artifacts {
-    type = "CODEPIPELINE"
+    type                = "CODEPIPELINE"
+    encryption_disabled = !var.build_configuration.encrypted_artifact
   }
 
   environment {
@@ -65,9 +65,10 @@ resource "aws_codebuild_project" "terraform_apply" {
   description   = "Apply Terraform"
   build_timeout = var.build_configuration.build_timeout
   service_role  = aws_iam_role.build.arn
-
+  tags          = var.tags
   artifacts {
-    type = "CODEPIPELINE"
+    type                = "CODEPIPELINE"
+    encryption_disabled = !var.build_configuration.encrypted_artifact
   }
 
   environment {
@@ -138,6 +139,7 @@ resource "aws_security_group" "builder" {
 resource "aws_cloudwatch_log_group" "account_provisioning_customizations" {
   name              = "/aws/codebuild/${var.labels.tags.Environment}/${var.labels.tags.Service}/build-logs"
   retention_in_days = var.log_group_retention
+  tags              = var.tags
 }
 
 
