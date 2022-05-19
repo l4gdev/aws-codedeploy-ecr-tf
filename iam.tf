@@ -1,9 +1,9 @@
 data "aws_s3_bucket" "bucket_name" {
-  bucket = var.s3_artifact_store
+  bucket = var.pipeline_artifacts_bucket
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codepipeline-role")
+  name = lower("${var.environment_name}-${var.application_name}-codepipeline-role")
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
@@ -21,7 +21,7 @@ resource "aws_iam_role" "codepipeline_role" {
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {
-  name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codepipeline-policy")
+  name = lower("${var.environment_name}-${var.application_name}-codepipeline-policy")
   role = aws_iam_role.codepipeline_role.id
   policy = jsonencode(
     {
@@ -91,9 +91,8 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
   )
 }
 
-
 resource "aws_iam_role" "build" {
-  name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codebuild-role")
+  name = lower("${var.environment_name}-${var.application_name}-codebuild-role")
   tags = var.tags
   assume_role_policy = jsonencode({
     "Version" : "2012-10-17",
@@ -111,7 +110,7 @@ resource "aws_iam_role" "build" {
 }
 
 resource "aws_iam_role_policy" "codebuild_role" {
-  name = lower("${var.labels.tags.Environment}-${var.labels.tags.Service}-codebuild-policy")
+  name = lower("${var.environment_name}-${var.application_name}-codebuild-policy")
   role = aws_iam_role.build.id
 
   policy = jsonencode({
@@ -217,7 +216,6 @@ resource "aws_iam_role_policy" "codebuild_role" {
   }
   )
 }
-
 
 resource "aws_iam_role_policy_attachment" "admin_rights" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"

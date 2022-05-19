@@ -2,23 +2,13 @@ data "local_file" "docker_build_buildspec" {
   filename = "${path.module}/buildspecs/docker-build.yml"
 }
 
-locals {
-  default_build_envs = {
-    AWS_DEFAULT_REGION = data.aws_region.current.name
-    AWS_ACCOUNT_ID     = tostring(data.aws_caller_identity.current.account_id)
-  }
-  build_envs = merge(merge(local.default_build_envs, var.build_envs), var.labels.tags)
-  build_spec = var.custom_build_spec == "" ? data.local_file.docker_build_buildspec.content : var.custom_build_spec
-}
-
-
 resource "aws_codebuild_project" "build" {
   depends_on    = [aws_cloudwatch_log_group.account_provisioning_customizations]
-  name          = "${var.labels.tags.Environment}-${var.labels.tags.Service}-build"
-  description   = "Build docker for ${var.labels.tags.Service}"
+  name          = "${var.environment_name}-${var.application_name}-build"
+  description   = "Build docker for ${var.application_name}"
   build_timeout = var.build_configuration.build_timeout
   service_role  = aws_iam_role.build.arn
-  tags          = var.tags
+  tags          = local.tags
 
   artifacts {
     type                = "CODEPIPELINE"
@@ -56,16 +46,15 @@ resource "aws_codebuild_project" "build" {
     subnets            = var.subnet_ids
     security_group_ids = [aws_security_group.builder.id]
   }
-
 }
 
 resource "aws_codebuild_project" "terraform_apply" {
   depends_on    = [aws_cloudwatch_log_group.account_provisioning_customizations]
-  name          = "${var.labels.tags.Environment}-${var.labels.tags.Service}-terraform-apply"
+  name          = "${var.environment_name}-${var.application_name}-terraform-apply"
   description   = "Apply Terraform"
   build_timeout = var.build_configuration.build_timeout
   service_role  = aws_iam_role.build.arn
-  tags          = var.tags
+  tags          = local.tags
   artifacts {
     type                = "CODEPIPELINE"
     encryption_disabled = !var.build_configuration.encrypted_artifact
@@ -100,9 +89,9 @@ resource "aws_codebuild_project" "terraform_apply" {
       TF_BACKEND_REGION = "eu-west-1"
       REGION            = "eu-west-1"
       TF_S3_BUCKET      = "terraform-state-${data.aws_caller_identity.current.account_id}"
-      TF_S3_KEY         = "${var.labels.tags.Environment}/${var.labels.tags.Service}.tfstate"
-      SERVICE           = var.labels.tags.Service
-      ENVIRONMENT       = var.labels.tags.Environment
+      TF_S3_KEY         = "${var.environment_name}/${var.application_name}.tfstate"
+      SERVICE           = var.application_name
+      ENVIRONMENT       = var.environment_name
       TAGS              = jsonencode(var.tags)
     })
   }
@@ -116,7 +105,7 @@ resource "aws_codebuild_project" "terraform_apply" {
 }
 
 resource "aws_security_group" "builder" {
-  name        = "${var.labels.tags.Environment}-${var.labels.tags.Service}-CodeBuild"
+  name        = "${var.environment_name}-${var.application_name}-CodeBuild"
   description = "test"
   vpc_id      = var.vpc_id
   egress = [
@@ -133,15 +122,15 @@ resource "aws_security_group" "builder" {
       self             = false
     }
   ]
-  tags = {
+  tags = merge(local.tags, {
     Name = "Build"
-  }
+  })
 }
 
 resource "aws_cloudwatch_log_group" "account_provisioning_customizations" {
-  name              = "/aws/codebuild/${var.labels.tags.Environment}/${var.labels.tags.Service}/build-logs"
-  retention_in_days = var.log_group_retention
-  tags              = var.tags
+  name              = "/aws/codebuild/${var.environment_name}/${var.application_name}/build-logs"
+  retention_in_days = var.logs_retention_in_days
+  tags              = local.tags
 }
 
 
