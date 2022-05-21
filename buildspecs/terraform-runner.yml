@@ -22,7 +22,7 @@ phases:
   build:
     commands:
       - cp ../../01/imageDetail.json .
-      - terraform apply --auto-approve -var-file=imageDetail.json -var "environment=${ENVIRONMENT}" -var 'tags=${TAGS}'
+      - terraform apply --auto-approve -var-file=imageDetail.json -var 'environment=${ENVIRONMENT}' -var 'tags=${TAGS}' -var-file='variables-${ENVIRONMENT}.tfvars'
   post_build:
     commands:
       - echo "Post-Build"
