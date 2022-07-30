@@ -31,11 +31,11 @@ variable "repository" {
 
 variable "build_configuration" {
   type = object({
-    build_timeout      = string
-    compute_type       = string
-    encrypted_artifact = bool
-    image              = string
 
+    build_timeout = string
+    compute_type  = string
+    image         = string
+    terraform_version =string
   })
   default = {
     build_timeout      = "300"
