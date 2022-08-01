@@ -2,16 +2,6 @@ data "local_file" "docker_build_buildspec" {
   filename = "${path.module}/buildspecs/docker-build.yml"
 }
 
-locals {
-  default_build_envs = {
-    AWS_DEFAULT_REGION = data.aws_region.current.name
-    AWS_ACCOUNT_ID     = tostring(data.aws_caller_identity.current.account_id)
-  }
-  build_envs = merge(merge(local.default_build_envs, var.build_envs), var.labels.tags)
-  build_spec = var.custom_build_spec == "" ? data.local_file.docker_build_buildspec.content : var.custom_build_spec
-}
-
-
 resource "aws_codebuild_project" "build" {
   depends_on    = [aws_cloudwatch_log_group.account_provisioning_customizations]
   name          = "${var.environment_name}-${var.application_name}-build"
@@ -103,6 +93,7 @@ resource "aws_codebuild_project" "terraform_apply" {
       SERVICE           = var.application_name
       ENVIRONMENT       = var.environment_name
       TAGS              = jsonencode(var.tags)
+      TARGETS = join(" ",[for t in var.resource_to_deploy: "-target=${t}"])
     })
   }
 

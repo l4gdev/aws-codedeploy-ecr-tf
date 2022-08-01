@@ -1,10 +1,10 @@
 variable "application_name" {
-  type = string
+  type        = string
   description = "Name of your service, should be unique across repository."
 }
 
 variable "environment_name" {
-  type = string
+  type        = string
   description = "Name of your deployment environment. For example; sandbox, staging, production."
 }
 
@@ -32,17 +32,19 @@ variable "repository" {
 variable "build_configuration" {
   type = object({
 
-    build_timeout = string
-    compute_type  = string
-    image         = string
-    terraform_version =string
+    build_timeout      = string
+    compute_type       = string
+    image              = string
+    terraform_version  = string
+    encrypted_artifact = bool
+
   })
   default = {
     build_timeout      = "300"
     compute_type       = "BUILD_GENERAL1_SMALL"
     encrypted_artifact = true
     image              = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
-    terraform_version  = "1.1.7"
+    terraform_version  = "1.2.6"
   }
 }
 
@@ -74,4 +76,10 @@ variable "tags" {
   type        = map(string)
   default     = {}
   description = "Additional tags (e.g. '{'BusinessUnit': 'XYZ'}`). Neither the tag keys nor the tag values will be modified by this module."
+}
+
+
+variable "resource_to_deploy" {
+  type = list(string)
+  default = []
 }
