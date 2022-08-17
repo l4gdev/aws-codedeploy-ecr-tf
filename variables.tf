@@ -80,6 +80,19 @@ variable "tags" {
 
 
 variable "resource_to_deploy" {
-  type = list(string)
+  type    = list(string)
   default = []
+}
+
+variable "region" {
+  type = string
+}
+
+variable "tfstate_bucket" {
+  type    = string
+  default = ""
+}
+variable "tf_backend_region" {
+  type    = string
+  default = ""
 }

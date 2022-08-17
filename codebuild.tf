@@ -86,14 +86,14 @@ resource "aws_codebuild_project" "terraform_apply" {
     type = "CODEPIPELINE"
     buildspec = templatefile("${path.module}/buildspecs/terraform-runner.yml", {
       TF_VERSION        = var.build_configuration.terraform_version
-      TF_BACKEND_REGION = "eu-west-1"
-      REGION            = "eu-west-1"
-      TF_S3_BUCKET      = "terraform-state-${data.aws_caller_identity.current.account_id}"
+      TF_BACKEND_REGION = var.tf_backend_region != "" ? var.tf_backend_region : data.aws_region.current.name
+      REGION            = var.region
+      TF_S3_BUCKET      = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
       TF_S3_KEY         = "${var.environment_name}/${var.application_name}.tfstate"
       SERVICE           = var.application_name
       ENVIRONMENT       = var.environment_name
       TAGS              = jsonencode(var.tags)
-      TARGETS = join(" ",[for t in var.resource_to_deploy: "-target=${t}"])
+      TARGETS           = join(" ", [for t in var.resource_to_deploy : "-target=${t}"])
     })
   }
 

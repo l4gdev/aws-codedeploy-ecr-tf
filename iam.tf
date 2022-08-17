@@ -15,7 +15,7 @@ resource "aws_iam_role" "codepipeline_role" {
         "Action" : "sts:AssumeRole"
       }
     ]
-  }
+    }
   )
   tags = var.tags
 }
@@ -76,7 +76,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "Effect" : "Allow",
           "Action" : "codestar-connections:UseConnection",
           "Resource" : "*"
-        }, {
+          }, {
           "Effect" : "Allow",
           "Action" : [
             "codebuild:StartBuild"
@@ -105,7 +105,7 @@ resource "aws_iam_role" "build" {
         "Action" : "sts:AssumeRole"
       }
     ]
-  }
+    }
   )
 }
 
@@ -213,7 +213,7 @@ resource "aws_iam_role_policy" "codebuild_role" {
         ]
       }
     ]
-  }
+    }
   )
 }
 
