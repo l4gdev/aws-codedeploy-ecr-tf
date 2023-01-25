@@ -1,7 +1,3 @@
-data "local_file" "docker_build_buildspec" {
-  filename = "${path.module}/buildspecs/docker-build.yml"
-}
-
 resource "aws_codebuild_project" "build" {
   depends_on    = [aws_cloudwatch_log_group.account_provisioning_customizations]
   name          = "${var.environment_name}-${var.application_name}-build"
@@ -83,18 +79,8 @@ resource "aws_codebuild_project" "terraform_apply" {
   }
 
   source {
-    type = "CODEPIPELINE"
-    buildspec = templatefile("${path.module}/buildspecs/terraform-runner.yml", {
-      TF_VERSION        = var.build_configuration.terraform_version
-      TF_BACKEND_REGION = var.tf_backend_region != "" ? var.tf_backend_region : data.aws_region.current.name
-      REGION            = var.region
-      TF_S3_BUCKET      = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
-      TF_S3_KEY         = "${var.environment_name}/${var.application_name}.tfstate"
-      SERVICE           = var.application_name
-      ENVIRONMENT       = var.environment_name
-      TAGS              = jsonencode(var.tags)
-      TARGETS           = join(" ", [for t in var.resource_to_deploy : "-target=${t}"])
-    })
+    type      = "CODEPIPELINE"
+    buildspec = var.custom_backend_template != "" ? var.custom_backend_template : local.default_terraform_spec
   }
 
   vpc_config {
@@ -107,12 +93,11 @@ resource "aws_codebuild_project" "terraform_apply" {
 
 resource "aws_security_group" "builder" {
   name        = "${var.environment_name}-${var.application_name}-CodeBuild"
-  description = "test"
+  description = "Allow CodeBuild to access resources "
   vpc_id      = var.vpc_id
   egress = [
     {
-
-      description      = "for all outgoing traffics"
+      description      = "Allow all outbound traffic by default"
       from_port        = 0
       to_port          = 0
       protocol         = "-1"
@@ -128,6 +113,7 @@ resource "aws_security_group" "builder" {
   })
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "account_provisioning_customizations" {
   name              = "/aws/codebuild/${var.environment_name}/${var.application_name}/build-logs"
   retention_in_days = var.logs_retention_in_days

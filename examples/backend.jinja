@@ -1,0 +1,30 @@
+provider "aws" {
+  region = "{{ provider_region }}"
+
+  assume_role {
+    role_arn = "{{ provider_role_arn }}"
+  }
+  default_tags {
+    tags = {
+      Service    = "{{ service }}"
+      managed_by = "Terraform"
+    }
+  }
+}
+
+
+terraform {
+  required_version = ">= {{ tf_version }}"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.51.0"
+    }
+  }
+  backend "s3" {
+    region         = "{{ region }}"
+    bucket         = "{{ bucket }}"
+    key            = "{{ key }}"
+    role_arn       = "{{ tfstate_role_arn }}"
+  }
+}

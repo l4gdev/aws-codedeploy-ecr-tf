@@ -24,15 +24,16 @@ resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
       name             = "Pull-sourcecode"
       category         = "Source"
       owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
+      provider         = var.codestar_connection_arn != null ? "CodeStarSourceConnection" : "CodeCommit"
       version          = "1"
       output_artifacts = ["repo"]
 
       configuration = {
-        ConnectionArn        = var.codestar_connection_arn
-        FullRepositoryId     = var.repository.name
+        ConnectionArn        = var.codestar_connection_arn != null ? var.codestar_connection_arn : null
+        FullRepositoryId     = var.codestar_connection_arn != null ? var.repository.name : null
+        RepositoryName       = var.codestar_connection_arn != null ? null : var.repository.name
         BranchName           = var.repository.branch
-        DetectChanges        = true
+        DetectChanges        = var.codestar_connection_arn != null ? true : null
         OutputArtifactFormat = "CODE_ZIP"
       }
     }

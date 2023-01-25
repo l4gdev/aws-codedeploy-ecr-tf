@@ -51,7 +51,7 @@ variable "build_configuration" {
 variable "custom_build_spec" {
   type        = string
   default     = ""
-  description = "AWS codebuild build spec"
+  description = "AWS codebuild build custom spec"
 }
 
 variable "build_envs" {
@@ -65,11 +65,9 @@ variable "pipeline_artifacts_bucket" {
 
 variable "codestar_connection_arn" {
   type        = string
+  default     = null
+  nullable    = true
   description = "An ARN for AWS codestar connection (eg for github)"
-  validation {
-    condition     = can(regex("^arn:aws:codestar-connections:[^:\n]*:[[:digit:]]{12}:connection/.+", var.codestar_connection_arn))
-    error_message = "Codestar connection must start with letter, only contain letters, numbers, dashes, or underscores and must be between 1 and 64 characters."
-  }
 }
 
 variable "tags" {
@@ -80,19 +78,46 @@ variable "tags" {
 
 
 variable "resource_to_deploy" {
-  type    = list(string)
-  default = []
+  type        = list(string)
+  default     = []
+  description = "List of resources that will be targeted by terraform. For example: ['aws_instance.test', 'module.app']"
 }
 
 variable "region" {
-  type = string
+  type        = string
+  description = "AWS region"
 }
 
 variable "tfstate_bucket" {
+  type        = string
+  default     = ""
+  description = "Name of the bucket where the terraform state will be stored by default terraform-state-<account_id>"
+}
+variable "tfstate_key" {
+  type        = string
+  default     = ""
+  description = "Name of the key where the terraform state will be stored by default <environment_name>/<application_name>.tfstate"
+}
+
+variable "tf_backend_region" {
+  type        = string
+  default     = ""
+  description = "AWS region where the terraform state will be stored by default the same as the region of the pipeline"
+}
+
+variable "custom_backend_template" {
   type    = string
   default = ""
 }
-variable "tf_backend_region" {
-  type    = string
-  default = ""
+
+variable "custom_backend_template_variables" {
+  type        = map(string)
+  description = "Custom variables to be passed to the backend template {\"tfstate_role_arn\": \"arn:aws:iam::123456789012:role/terraform-state-role\"}"
+  default     = {}
+}
+
+variable "terraform_directory" {
+  default     = "./infrastructure"
+  type        = string
+  description = "The directory where the terraform files are located"
 }
