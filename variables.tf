@@ -117,7 +117,7 @@ variable "custom_backend_template_variables" {
 }
 
 variable "terraform_directory" {
-  default     = "./infrastructure"
+  default     = ""
   type        = string
   description = "The directory where the terraform files are located"
 }
