@@ -11,6 +11,7 @@ locals {
   build_spec = var.custom_build_spec == "" ? file("${path.module}/buildspecs/docker-build.yml") : var.custom_build_spec
   default_terraform_spec = templatefile("${path.module}/buildspecs/terraform-runner.yml", {
     TF_VERSION                   = var.build_configuration.terraform_version
+    IMAGE_DETAILS_PATH           = "..${var.terraform_directory == "" ? "" :"/.." }/01/imageDetail.json"
     TF_BACKEND_REGION            = var.tf_backend_region != "" ? var.tf_backend_region : data.aws_region.current.name
     REGION                       = var.region
     TF_S3_BUCKET                 = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
