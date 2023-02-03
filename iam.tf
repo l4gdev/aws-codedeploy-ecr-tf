@@ -198,9 +198,7 @@ resource "aws_iam_role_policy" "codebuild_role" {
         "Action" : [
           "sts:AssumeRole"
         ],
-        "Resource" : [
-          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSAFTAdmin"
-        ]
+        "Resource" : local.roles_allowed_to_assume
       },
       {
         "Effect" : "Allow",
@@ -217,7 +215,13 @@ resource "aws_iam_role_policy" "codebuild_role" {
   )
 }
 
-resource "aws_iam_role_policy_attachment" "admin_rights" {
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-  role       = aws_iam_role.build.id
+locals {
+  roles_allowed_to_assume = concat([
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/AWSAFTAdmin"
+  ], var.roles_allowed_to_assume)
+}
+
+variable "roles_allowed_to_assume" {
+  type = list(string)
+  default = []
 }
