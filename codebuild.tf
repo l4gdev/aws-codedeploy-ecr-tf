@@ -1,4 +1,5 @@
 resource "aws_codebuild_project" "build" {
+  count         = var.terraform_only ? 0 : 1
   depends_on    = [aws_cloudwatch_log_group.account_provisioning_customizations]
   name          = "${var.environment_name}-${var.application_name}-build"
   description   = "Build docker for ${var.application_name}"

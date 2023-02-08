@@ -30,7 +30,6 @@ The following resources are used by this module:
 - [aws_iam_role.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) (resource)
 - [aws_iam_role_policy.codebuild_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) (resource)
 - [aws_iam_role_policy.codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) (resource)
-- [aws_iam_role_policy_attachment.admin_rights](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) (resource)
 - [aws_security_group.builder](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) (resource)
 - [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) (data source)
 - [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) (data source)
@@ -177,6 +176,14 @@ Type: `list(string)`
 
 Default: `[]`
 
+### <a name="input_roles_allowed_to_assume"></a> [roles\_allowed\_to\_assume](#input\_roles\_allowed\_to\_assume)
+
+Description: n/a
+
+Type: `list(string)`
+
+Default: `[]`
+
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
 Description: Additional tags (e.g. '{'BusinessUnit': 'XYZ'}`). Neither the tag keys nor the tag values will be modified by this module.`
@@ -191,7 +198,15 @@ Description: The directory where the terraform files are located
 
 Type: `string`
 
-Default: `"./infrastructure"`
+Default: `""`
+
+### <a name="input_terraform_only"></a> [terraform\_only](#input\_terraform\_only)
+
+Description: n/a
+
+Type: `bool`
+
+Default: `false`
 
 ### <a name="input_tf_backend_region"></a> [tf\_backend\_region](#input\_tf\_backend\_region)
 

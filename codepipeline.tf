@@ -39,23 +39,27 @@ resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
     }
   }
 
-  stage {
-    name = "Build-docker"
+  dynamic "stage" {
+    for_each = var.terraform_only ? toset([]) : toset(["1"])
+    content {
+      name = "Build-docker"
 
-    action {
-      name             = "Build-and-push-app-container"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["repo"]
-      output_artifacts = ["build_output"]
-      version          = "1"
-      run_order        = "2"
-      configuration = {
-        ProjectName = aws_codebuild_project.build.name
+      action {
+        name             = "Build-and-push-app-container"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        input_artifacts  = ["repo"]
+        output_artifacts = ["build_output"]
+        version          = "1"
+        run_order        = "2"
+        configuration = {
+          ProjectName = aws_codebuild_project.build[0].name
+        }
       }
     }
   }
+
 
   stage {
     name = "Terraform-apply"
@@ -65,10 +69,10 @@ resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
-      input_artifacts  = ["repo", "build_output"]
+      input_artifacts  = var.terraform_only ? ["repo"] : ["repo", "build_output"]
       output_artifacts = ["terraform_apply_output"]
       version          = "1"
-      run_order        = "3"
+      run_order        = var.terraform_only ? "2" : "3"
       configuration = {
         ProjectName   = aws_codebuild_project.terraform_apply.name
         PrimarySource = "repo"

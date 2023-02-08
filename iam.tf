@@ -81,9 +81,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
           "Action" : [
             "codebuild:StartBuild"
           ],
-          "Resource" : [
-            "arn:aws:codebuild:eu-west-1:${data.aws_caller_identity.current.account_id}:project/${aws_codebuild_project.build.name}"
-          ]
+          "Resource" : [for build in aws_codebuild_project.build : "arn:aws:codebuild:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:project/${build.name}"]
         }
       ]
     }
@@ -222,6 +220,6 @@ locals {
 }
 
 variable "roles_allowed_to_assume" {
-  type = list(string)
+  type    = list(string)
   default = []
 }

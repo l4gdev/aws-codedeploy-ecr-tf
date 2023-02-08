@@ -121,3 +121,8 @@ variable "terraform_directory" {
   type        = string
   description = "The directory where the terraform files are located"
 }
+
+variable "terraform_only" {
+  type    = bool
+  default = false
+}
