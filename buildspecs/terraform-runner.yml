@@ -21,8 +21,8 @@ phases:
 
   build:
     commands:
-      - cp ${IMAGE_DETAILS_PATH} .
-      - terraform apply --auto-approve -var-file=imageDetail.json -var 'environment=${ENVIRONMENT}'  -var-file='variables-${ENVIRONMENT}.tfvars' ${TARGETS}
+      - ${IMAGE_DETAILS_PATH_COPY_COMMAND}
+      - terraform apply --auto-approve ${TERRAFORM_ARGS} -var 'environment=${ENVIRONMENT}'  -var-file='variables-${ENVIRONMENT}.tfvars' ${TARGETS}
   post_build:
     commands:
       - echo "Post-Build"
