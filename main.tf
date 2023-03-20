@@ -27,5 +27,3 @@ locals {
     TERRAFORM_ARGS                  = var.terraform_only ? "" : "-var-file=imageDetail.json"
   })
 }
-
-

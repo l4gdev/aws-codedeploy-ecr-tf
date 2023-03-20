@@ -15,7 +15,7 @@ phases:
       - cd $DEFAULT_PATH/${TERRAFORM_DIRECTORY}
       - |
         for f in *.jinja; do jinja2 $f -D region=${TF_BACKEND_REGION} -D provider_region=${REGION} -D bucket=${TF_S3_BUCKET} -D key=${TF_S3_KEY} -D service=${SERVICE} -D tf_version=${TF_VERSION} ${CUSTOM_BACKEND_TEMPLATE_VARS} >> ./$(basename $f .jinja).tf; done
-        for f in *.tf; do echo "\n \n"; echo $f; cat $f; done       
+        for f in *.tf; do echo "\n \n"; echo $f; cat $f; done
       - ls -ali
       - terraform init -upgrade
 

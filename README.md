@@ -1,7 +1,5 @@
 # terraform-aws-codedeploy-ecr
-This module creates a terraform-enabled deployment pipeline using codebuild and codepipeline. 
-
-It's 100% Open Source and licensed under the apache2.
+This module creates a terraform-enabled deployment pipeline using codebuild and codepipeline.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
