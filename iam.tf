@@ -149,7 +149,9 @@ resource "aws_iam_role_policy" "codebuild_role" {
         ],
         Resource : [
           data.aws_s3_bucket.bucket_name.arn,
-          "${data.aws_s3_bucket.bucket_name.arn}/*"
+          "${data.aws_s3_bucket.bucket_name.arn}/*",
+          "arn:aws:s3:::${local.tf_state_bucket}/*"
+
         ]
       },
       #      {

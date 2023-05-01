@@ -11,12 +11,13 @@ locals {
 
   build_envs = merge(merge(local.default_build_envs, var.build_envs), local.tags)
   build_spec = var.custom_build_spec == "" ? file("${path.module}/buildspecs/docker-build.yml") : var.custom_build_spec
+  tf_state_bucket = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
   default_terraform_spec = templatefile("${path.module}/buildspecs/terraform-runner.yml", {
     TF_VERSION                      = var.build_configuration.terraform_version
     IMAGE_DETAILS_PATH_COPY_COMMAND = var.terraform_only ? "echo \"Terraform only run nothing to copy\"" : "cp ..${var.terraform_directory == "" ? "" : "/.."}/01/imageDetail.json ."
     TF_BACKEND_REGION               = var.tf_backend_region != "" ? var.tf_backend_region : data.aws_region.current.name
     REGION                          = var.region
-    TF_S3_BUCKET                    = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
+    TF_S3_BUCKET                    = local.tf_state_bucket
     TF_S3_KEY                       = var.tfstate_key != "" ? var.tfstate_key : "${var.environment_name}/${var.application_name}.tfstate"
     SERVICE                         = var.application_name
     ENVIRONMENT                     = var.environment_name
