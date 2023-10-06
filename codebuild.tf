@@ -15,7 +15,7 @@ resource "aws_codebuild_project" "build" {
   environment {
     compute_type                = var.build_configuration.compute_type
     image                       = var.build_configuration.image
-    type                        = "LINUX_CONTAINER"
+    type                        = var.build_configuration.type
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = true
     dynamic "environment_variable" {
@@ -58,8 +58,8 @@ resource "aws_codebuild_project" "terraform_apply" {
   }
 
   environment {
-    compute_type                = var.build_configuration.compute_type
-    image                       = var.build_configuration.image
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     type                        = "LINUX_CONTAINER"
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = true

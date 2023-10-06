@@ -107,7 +107,8 @@ object({
 
     build_timeout      = string
     compute_type       = string
-    image              = string
+    type               = optional(string, "LINUX_CONTAINER")
+    image              = optional(string, "aws/codebuild/amazonlinux2-x86_64-standard:5.0")
     terraform_version  = string
     encrypted_artifact = bool
 
@@ -121,8 +122,9 @@ Default:
   "build_timeout": "300",
   "compute_type": "BUILD_GENERAL1_SMALL",
   "encrypted_artifact": true,
-  "image": "aws/codebuild/amazonlinux2-x86_64-standard:3.0",
-  "terraform_version": "1.2.6"
+  "image": "aws/codebuild/amazonlinux2-x86_64-standard:5.0",
+  "terraform_version": "1.2.6",
+  "type": "LINUX_CONTAINER"
 }
 ```
 

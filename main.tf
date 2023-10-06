@@ -9,8 +9,8 @@ locals {
   }
 
 
-  build_envs = merge(merge(local.default_build_envs, var.build_envs), local.tags)
-  build_spec = var.custom_build_spec == "" ? file("${path.module}/buildspecs/docker-build.yml") : var.custom_build_spec
+  build_envs      = merge(merge(local.default_build_envs, var.build_envs), local.tags)
+  build_spec      = var.custom_build_spec == "" ? file("${path.module}/buildspecs/docker-build.yml") : var.custom_build_spec
   tf_state_bucket = var.tfstate_bucket != "" ? var.tfstate_bucket : "terraform-state-${data.aws_caller_identity.current.account_id}"
   default_terraform_spec = templatefile("${path.module}/buildspecs/terraform-runner.yml", {
     TF_VERSION                      = var.build_configuration.terraform_version

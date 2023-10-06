@@ -34,7 +34,8 @@ variable "build_configuration" {
 
     build_timeout      = string
     compute_type       = string
-    image              = string
+    type               = optional(string, "LINUX_CONTAINER")
+    image              = optional(string, "aws/codebuild/amazonlinux2-x86_64-standard:5.0")
     terraform_version  = string
     encrypted_artifact = bool
 
@@ -42,9 +43,15 @@ variable "build_configuration" {
   default = {
     build_timeout      = "300"
     compute_type       = "BUILD_GENERAL1_SMALL"
+    type               = "LINUX_CONTAINER"
     encrypted_artifact = true
-    image              = "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    image              = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
     terraform_version  = "1.2.6"
+  }
+  validation {
+    # environment can be ARM_CONTAINER, LINUX_CONTAINER, LINUX_GPU_CONTAINER
+    condition     = contains(["ARM_CONTAINER", "LINUX_CONTAINER", "LINUX_GPU_CONTAINER"], var.build_configuration.type)
+    error_message = "type must be ARM_CONTAINER, LINUX_CONTAINER, LINUX_GPU_CONTAINER"
   }
 }
 
